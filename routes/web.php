@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
     Route::get('/home', [PostController::class, 'home'])->name('home');
-    Route::post('/makingPost', [PostController::class, 'makingPost'])->name('posts.create');
+    Route::post('/makingPost', [PostController::class, 'makingPost'])->name('posts.store');
     Route::post('/logout', [UserController::class, 'logout']);
 });
 

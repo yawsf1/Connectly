@@ -38,4 +38,50 @@ class PostController extends Controller
 
         return redirect()->route('home')->with('success', 'Post created!');
     }
+    
+
+    public function index() {
+        return response()->json(Post::all());
+    }
+
+    public function show($id) {
+        $post = Post::find($id);
+        if (!$post) {
+            return response()->json(['message' => 'Post not found'], 404);
+        }
+        return response()->json($post);
+    }
+
+    public function store(Request $request) {
+        $request->validate([
+            'title' => 'required',
+            'content' => 'required'
+        ]);
+
+        $post = Post::create($request->all());
+        return response()->json($post, 201);
+    }
+
+    public function update(Request $request, $id) {
+        $post = Post::find($id);
+        if (!$post) {
+            return response()->json(['message' => 'Post not found'], 404);
+        }
+
+        $post->update($request->all());
+        return response()->json($post);
+    }
+
+    public function destroy($id){
+        
+        $post = Post::find($id);
+        
+        if (!$post) {
+            return response()->json(['error' => 'Post not found'], 404);
+        }
+        
+        $post->delete();
+        
+        return response()->json(['message' => 'Post deleted successfully']);
+    }
 }
