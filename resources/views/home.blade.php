@@ -14,45 +14,16 @@
 </head>
 <body>
     <header>
-        <div class="all_navigation_bar">
-            <nav class="nav_title">
-                <a class="app_name" href="/">Connectly</a>
-            </nav>
-            <nav class="nav_sections">
-                <ul class="list_sections">
-                    <li><a id="home_link" href="/">HOME</a></li>
-                    <li><a href="/posts">POSTS</a></li>
-                    <li><a href="/friends">FRIENDS</a></li>
-                    <li><a href="/notifications">NOTIFICATIONS</a></li>
-                </ul>
-            </nav>
-            <form action="/logout" method="POST" class="nav_logout">
-                @csrf
-                <button type="submit">DÉCONNECTER</button>
-            </form>
-        </div>
+        @include('parts.MainNav')
     </header>
+
     <main class="container_of_home">
-        <div class="side_bar">
-            <div class="realSideBar">
-                <nav class="section_icons">
-                    <ul class="icons_for_sections">
-                        <li><i class="fa-solid fa-paper-plane"></i></li>
-                        <li><i class="fa-solid fa-message"></i></li>
-                        <li><i class="fa-solid fa-user"></i></li>
-                        <li><i class="fa-solid fa-newspaper"></i></li>
-                        <li><i class="fa-regular fa-note-sticky"></i></li>
-                    </ul>
-                </nav>
-                <nav class="parametre_icon">
-                    <i class="fa-solid fa-gear"></i>
-                </nav>
-            </div>
-        </div>
+        @include('parts.SideNav')
         <div class="main_page">
+
             <div class="page_home">
                 <h3 class="salutation">{{ session('name') }}</h3>
-                <form class="post_writing_content" action="{{ route('posts.store') }}" method="post">
+                <form class="post_writing_content" action="{{ route('makingPost') }}" method="POST">
                     @csrf
                     <textarea  type="text" name="content" id="tell_friends" placeholder="Tell your friends something new! ..."></textarea>
                     <button type="submit" id="post_it" name="post_it">Post it</button>
@@ -60,6 +31,17 @@
                 <div class="allPosts">
                     @foreach($usersAndPosts as $userAndPost)
                         <div class="iPost" data-id="{{$userAndPost->post_id}}">
+                            <div class="deletePostConfirmation">
+                                <i class="fa-solid fa-xmark deleteAttentionQuestion"></i>
+                                <h3>
+                                    <span class="mainAttentionQuestion"> you sure you want to delete this post? </span>
+                                    <br><span class="mainAttentionProblem">This action cannot be undone. </span>
+                                </h3>
+                                <div class="btnsOfAttentionContainer">
+                                    <button class="confirmDeletePost">Delete</button>
+                                    <button class="cancelDeletePost">Cancel</button>
+                                </div>
+                            </div>    
                             @if($userAndPost->user_id === Auth::id())
                                 <div class="PostModifications">
                                     <ul>
@@ -70,7 +52,7 @@
                             @endif
                             <div class="firstLine">
                                 <h3 class="userName">
-                                    <img src="{{ isset($userAndPost->avatar) ? $userAndPost->avatar : asset('media/Untitled (2).png') }}" alt="" >
+                                    <img class="profileImage" src="{{ $userAndPost->avatar ?? asset('media/Untitled (2).png') }}" alt="" >
                                     {{ $userAndPost->name }}
                                 </h3>
                                 <h3 class="creationDate">

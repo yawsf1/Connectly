@@ -16,17 +16,17 @@
     <header class="header2">
         <div class="all_navigation_bar2">
             <nav class="nav_title">
-                <a class="app_name" href="/">Connectly</a>
+                <a class="app_name" href="{{route('registerPage')}}">Connectly</a>
             </nav>
             <nav class="nav_logout">
-                <a href="/login">LOGIN</a>
+                <a href="{{route('loginPage')}}">LOGIN</a>
             </nav>
         </div>
     </header>
     <main class="container_of_home2">
         <h1 class="title_register">Start Your Journey</h1>
 
-        <form class="register_form" action="/register" method="post">
+        <form class="register_form" action="{{ route('register') }}" method="post">
 
             @csrf            
             <input type="text" name="name" id="name" value="{{old('name')}}" class="name1" placeholder="Your name ...">

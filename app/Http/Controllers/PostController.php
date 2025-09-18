@@ -35,7 +35,6 @@ class PostController extends Controller
         $inputs['user_id'] = Auth::id();
 
         Post::create($inputs);
-
         return redirect()->route('home')->with('success', 'Post created!');
     }
     
