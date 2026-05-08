@@ -11,58 +11,169 @@
     <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Anton&family=Bebas+Neue&family=Boldonse&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lobster&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Flex:opsz,wght@8..144,100..1000&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik+Glitch&family=Staatliches&display=swap" rel="stylesheet">
     <link rel="icon" href="{{ asset('media/Untitled design.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <title>Connectly - Notifications</title>
+    <title>Connectly - Messages</title>
 </head>
 <body>
     <header>
-        <?php 
-           $usersAndPosts = []; 
-        ?>
+        <?php $usersAndPosts = []; ?>
         @include('parts.MainNav', ['usersAndPosts' => \Illuminate\Support\Facades\DB::table('users')->select('avatar')->where('id', Auth::id())->get()->map(function($user) { return (object)['user_id' => Auth::id(), 'avatar' => $user->avatar]; })])
     </header>
 
     <main class="container_of_home">
         @include('parts.SideNav')
         <div class="main_page">
-
             <div class="page_home">
                 <h3 class="salutation" style="color: #AACD72; font-weight: bold; font-size: 1.5rem; text-align: center;">Messages</h3>
 
                 <div class="allPosts" style="margin-top: 20px; width: 100%; display: flex; flex-direction: column; gap: 30px;">
-                    
+
+                    {{-- NEW MESSAGE FORM --}}
                     <div style="background-color: #DAEDED; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%;">
-                        <h4 style="color: #01544F; font-family: 'Poppins', sans-serif; margin-bottom: 15px; font-size: 1.2rem;"><i class="fa-solid fa-paper-plane" style="color: #AACD72; margin-right: 8px;"></i> New Message</h4>
-                        <form method="POST" action="{{ route('messages.store') }}" style="display: flex; flex-direction: column; gap: 15px;">
-                            @csrf
-                            <input type="number" name="receiver_id" placeholder="Receiver User ID" required style="padding: 12px; border-radius: 6px; border: 1px solid #ccc; outline: none; font-family: 'Poppins', sans-serif; transition: border-color 0.3s;" onfocus="this.style.borderColor='#01544F'" onblur="this.style.borderColor='#ccc'">
-                            <textarea name="content" placeholder="Type your message here..." required style="padding: 12px; border-radius: 6px; border: 1px solid #ccc; outline: none; font-family: 'Poppins', sans-serif; min-height: 80px; resize: vertical; transition: border-color 0.3s;" onfocus="this.style.borderColor='#01544F'" onblur="this.style.borderColor='#ccc'"></textarea>
-                            <button type="submit" style="background-color: #01544F; color: #AACD72; border: none; padding: 10px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; align-self: flex-start; transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#02423e'" onmouseout="this.style.backgroundColor='#01544F'">Send <i class="fa-solid fa-arrow-right" style="margin-left: 5px;"></i></button>
-                        </form>
+                        <h4 style="color: #01544F; font-family: 'Poppins', sans-serif; margin-bottom: 15px; font-size: 1.2rem;">
+                            <i class="fa-solid fa-paper-plane" style="color: #AACD72; margin-right: 8px;"></i> New Message
+                        </h4>
+
+                        @if($friends->isEmpty())
+                            {{-- No friends yet --}}
+                            <div style="text-align: center; color: #666; padding: 20px; background-color: #fff; border-radius: 8px;">
+                                <i class="fa-solid fa-user-group" style="font-size: 1.8rem; color: #DAEDED; margin-bottom: 10px; display: block;"></i>
+                                <p style="font-family: 'Poppins', sans-serif; margin: 0;">You have no friends yet. Add friends to start messaging.</p>
+                            </div>
+                        @else
+                            <form method="POST" action="{{ route('messages.store') }}" style="display: flex; flex-direction: column; gap: 15px;">
+                                @csrf
+
+                                {{-- Friends dropdown --}}
+                                <div style="position: relative;">
+                                    <label style="font-family: 'Poppins', sans-serif; font-size: 0.85rem; color: #01544F; font-weight: 600; margin-bottom: 6px; display: block;">
+                                        Send to
+                                    </label>
+                                    <div style="position: relative;">
+                                        <select
+                                            name="receiver_id"
+                                            required
+                                            style="
+                                                width: 100%;
+                                                padding: 12px 40px 12px 45px;
+                                                border-radius: 6px;
+                                                border: 1px solid #ccc;
+                                                outline: none;
+                                                font-family: 'Poppins', sans-serif;
+                                                font-size: 0.95rem;
+                                                color: #01544F;
+                                                background-color: #fff;
+                                                appearance: none;
+                                                -webkit-appearance: none;
+                                                cursor: pointer;
+                                                transition: border-color 0.3s;
+                                            "
+                                            onfocus="this.style.borderColor='#01544F'"
+                                            onblur="this.style.borderColor='#ccc'"
+                                        >
+                                            <option value="" disabled selected style="color: #999;">Choose a friend...</option>
+                                            @foreach($friends as $friend)
+                                                <option value="{{ $friend->id }}">
+                                                    {{ $friend->name }}
+                                                    &nbsp;·&nbsp;
+                                                    {{ $friend->unique_code }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+
+                                        {{-- User icon on the left --}}
+                                        <i class="fa-solid fa-user" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #AACD72; pointer-events: none;"></i>
+
+                                        {{-- Chevron on the right --}}
+                                        <i class="fa-solid fa-chevron-down" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #01544F; pointer-events: none; font-size: 0.8rem;"></i>
+                                    </div>
+                                </div>
+
+                                {{-- Message textarea --}}
+                                <div>
+                                    <label style="font-family: 'Poppins', sans-serif; font-size: 0.85rem; color: #01544F; font-weight: 600; margin-bottom: 6px; display: block;">
+                                        Message
+                                    </label>
+                                    <textarea
+                                        name="content"
+                                        placeholder="Type your message here..."
+                                        required
+                                        style="
+                                            width: 100%;
+                                            padding: 12px;
+                                            border-radius: 6px;
+                                            border: 1px solid #ccc;
+                                            outline: none;
+                                            font-family: 'Poppins', sans-serif;
+                                            min-height: 100px;
+                                            resize: vertical;
+                                            transition: border-color 0.3s;
+                                            box-sizing: border-box;
+                                        "
+                                        onfocus="this.style.borderColor='#01544F'"
+                                        onblur="this.style.borderColor='#ccc'"
+                                    ></textarea>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    style="
+                                        background-color: #01544F;
+                                        color: #AACD72;
+                                        border: none;
+                                        padding: 10px 24px;
+                                        font-weight: bold;
+                                        font-family: 'Poppins', sans-serif;
+                                        border-radius: 6px;
+                                        cursor: pointer;
+                                        align-self: flex-start;
+                                        transition: background-color 0.3s;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 8px;
+                                    "
+                                    onmouseover="this.style.backgroundColor='#02423e'"
+                                    onmouseout="this.style.backgroundColor='#01544F'"
+                                >
+                                    Send <i class="fa-solid fa-paper-plane"></i>
+                                </button>
+                            </form>
+                        @endif
                     </div>
 
+                    {{-- INBOX HISTORY --}}
                     <div style="background-color: #ffffff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%;">
-                        <h4 style="color: #01544F; font-family: 'Poppins', sans-serif; margin-bottom: 20px; border-bottom: 2px solid #DAEDED; padding-bottom: 10px;"><i class="fa-solid fa-inbox" style="color: #AACD72; margin-right: 8px;"></i> Inbox History</h4>
-                        
+                        <h4 style="color: #01544F; font-family: 'Poppins', sans-serif; margin-bottom: 20px; border-bottom: 2px solid #DAEDED; padding-bottom: 10px;">
+                            <i class="fa-solid fa-inbox" style="color: #AACD72; margin-right: 8px;"></i> Inbox History
+                        </h4>
+
                         @if($messages->isEmpty())
                             <div style="text-align: center; color: #666; padding: 30px;">
-                                <i class="fa-regular fa-comments" style="font-size: 2rem; color: #DAEDED; margin-bottom: 10px;"></i><br>
+                                <i class="fa-regular fa-comments" style="font-size: 2rem; color: #DAEDED; margin-bottom: 10px; display: block;"></i>
                                 No messages yet.
                             </div>
                         @else
                             <div style="display: flex; flex-direction: column; gap: 15px; max-height: 500px; overflow-y: auto; padding-right: 10px;">
                                 @foreach($messages as $message)
                                     @if($message->sender_id === Auth::id())
+                                        {{-- Sent message --}}
                                         <div style="align-self: flex-end; background-color: #AACD72; color: #01544F; padding: 12px 18px; border-radius: 20px 20px 0px 20px; max-width: 75%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                                             <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; gap: 15px;">
-                                                <strong style="font-size: 0.85rem; opacity: 0.8;">To: User {{ $message->receiver_id }}</strong>
+                                                <strong style="font-size: 0.85rem; opacity: 0.8; font-family: 'Poppins', sans-serif;">
+                                                    <i class="fa-solid fa-arrow-up-right" style="font-size: 0.7rem;"></i>
+                                                    To: {{ $message->receiver->name ?? 'User #' . $message->receiver_id }}
+                                                </strong>
                                                 <small style="font-size: 0.7rem; opacity: 0.7;">{{ $message->created_at->diffForHumans() }}</small>
                                             </div>
                                             <p style="margin: 0; font-family: 'Inter', sans-serif;">{{ $message->content }}</p>
                                         </div>
                                     @else
+                                        {{-- Received message --}}
                                         <div style="align-self: flex-start; background-color: #DAEDED; color: #01544F; padding: 12px 18px; border-radius: 20px 20px 20px 0px; max-width: 75%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                                             <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; gap: 15px;">
-                                                <strong style="font-size: 0.85rem; opacity: 0.8;">From: User {{ $message->sender_id }}</strong>
+                                                <strong style="font-size: 0.85rem; opacity: 0.8; font-family: 'Poppins', sans-serif;">
+                                                    <i class="fa-solid fa-arrow-down-left" style="font-size: 0.7rem;"></i>
+                                                    From: {{ $message->sender->name ?? 'User #' . $message->sender_id }}
+                                                </strong>
                                                 <small style="font-size: 0.7rem; opacity: 0.7;">{{ $message->created_at->diffForHumans() }}</small>
                                             </div>
                                             <p style="margin: 0; font-family: 'Inter', sans-serif;">{{ $message->content }}</p>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Message;
+use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -40,6 +41,10 @@ class MessageController extends Controller
             'sender_id' => Auth::id(),
             'receiver_id' => $request->receiver_id,
             'content' => $request->content
+        ]);
+        Notification::create([
+            'user_id' => $request->receiver_id,
+            'message' => Auth::user()->name . ' sent you a message.'
         ]);
 
         return back()->with('success', 'Message sent!');

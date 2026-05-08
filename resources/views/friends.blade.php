@@ -49,11 +49,14 @@
 
                     <div class="iPost" style="margin-bottom: 30px; padding: 20px;">
                         <h4 style="color: #01544F;">Add Friend</h4>
+
                         <form method="POST" action="{{ route('friends.store') }}" style="display: flex; gap: 10px; margin-top: 10px;">
                             @csrf
                             <input type="text" name="unique_code" placeholder="Unique ID (9 chars)" maxlength="9" required style="padding: 10px; border-radius: 6px; border: 1px solid #ccc; flex-grow: 1; outline: none;" onfocus="this.style.borderColor='#01544F'" onblur="this.style.borderColor='#ccc'">
                             <button type="submit" style="background-color: #AACD72; color: #01544F; font-weight: bold; border: none; padding: 10px 20px; cursor: pointer; border-radius: 6px;">Send Request</button>
                         </form>
+                                                <p style="color: #666; font-size: 0.9rem; margin-top: 5px;">                                                Enter your friend's unique ID (e.g. IZFELSHA5)</p>
+
                     </div>
 
                     <div class="iPost" style="margin-bottom: 30px; padding: 20px;">

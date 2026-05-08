@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Friend;
+use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,7 +27,7 @@ class FriendController extends Controller
 
         $pendingRequests = Friend::with('user')->where('friend_id', $userId)->where('status', 'pending')->get();
         
-        $usersAndPosts = []; // Placeholder for layout
+        $usersAndPosts = []; 
         return view('friends', compact('friends', 'pendingRequests', 'usersAndPosts'));
     }
 
@@ -39,7 +40,6 @@ class FriendController extends Controller
             return back()->withErrors(['unique_code' => 'You cannot add yourself!']);
         }
         
-        // Prevent duplicate requests
         $exists = Friend::where(function($query) use ($friend) {
             $query->where('user_id', Auth::id())->where('friend_id', $friend->id);
         })->orWhere(function($query) use ($friend) {
@@ -52,6 +52,11 @@ class FriendController extends Controller
                 'friend_id' => $friend->id,
                 'status' => 'pending'
             ]);
+
+            Notification::create([
+                'user_id' => $friend->id,
+                'message' => Auth::user()->name . ' sent you a friend request.'
+            ]);
         }
         return back()->with('success', 'Friend request sent!');
     }
@@ -59,6 +64,10 @@ class FriendController extends Controller
     public function update(Request $request, $id) {
         $friend = Friend::where('id', $id)->where('friend_id', Auth::id())->firstOrFail();
         $friend->update(['status' => 'accepted']);
+        Notification::create([
+            'user_id' => $friend->user_id,
+            'message' => Auth::user()->name . ' accepted your friend request.'
+        ]);
         return back()->with('success', 'Friend request accepted!');
     }
 
