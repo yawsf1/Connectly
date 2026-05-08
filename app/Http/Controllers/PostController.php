@@ -26,6 +26,24 @@ class PostController extends Controller
         return view('home', compact('usersAndPosts'));
     }
 
+    public function myPosts() {
+        $usersAndPosts = DB::table('users')
+            ->join('posts', 'users.id', '=', 'posts.user_id')
+            ->select('users.id as user_id',
+                     'users.name', 
+                     'posts.id as post_id', 
+                     'posts.content', 
+                     'posts.created_at', 
+                     'users.avatar',
+                     DB::raw('DATE_FORMAT(posts.created_at, "%d/%m/%y") as createdDate'), 
+                     DB::raw('DATE_FORMAT(posts.created_at, "%H:%i") as createdTime'))                
+            ->where('posts.user_id', Auth::id())
+            ->orderBy('posts.created_at', 'desc')
+            ->get();
+        
+        return view('myPosts', compact('usersAndPosts'));
+    }
+
     public function makingPost(Request $request) {
         $inputs = $request->validate([
             'content' => 'required|min:2|max:5000',
@@ -66,6 +84,9 @@ class PostController extends Controller
         if (!$post) {
             return response()->json(['message' => 'Post not found'], 404);
         }
+        if ($post->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
 
         $post->update($request->all());
         return response()->json($post);
@@ -77,6 +98,9 @@ class PostController extends Controller
         
         if (!$post) {
             return response()->json(['error' => 'Post not found'], 404);
+        }
+        if ($post->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
         
         $post->delete();

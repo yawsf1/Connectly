@@ -16,12 +16,13 @@ class UserController extends Controller
     {
         $inputs = $request->validate([
             'name' => ['required', 'string', 'min:3', 'max:40'],
-            'email' => ['required', 'email', 'max:60', Rule::unique('users', 'email')],
+            'email' => ['required', 'email', 'max:60', 'unique:users,email'],
             'password' => ['required', Password::min(8)],
         ]);
 
         $inputs['name'] = strip_tags($inputs['name']);
         $inputs['password'] = bcrypt($inputs['password']);
+        $inputs['unique_code'] = strtoupper(str()->random(9));
 
         $user = User::create($inputs);
         Auth::login($user);
@@ -72,6 +73,7 @@ class UserController extends Controller
                 ['email' => $googleUser->getEmail()],
                 [
                     'name' => $googleUser->getName(),
+                    'unique_code' => strtoupper(str()->random(9)),
                     'google_id' => $googleUser->getId(),
                     'avatar' => $googleUser->getAvatar(),
                     'password' => bcrypt(str()->random(16)), 
@@ -93,5 +95,35 @@ class UserController extends Controller
                 'google' => 'Google login failed. Please try again.'
             ]);
         }
+    }
+
+    // Display the settings/profile page
+    public function settings()
+    {
+        $user = Auth::user();
+        $usersAndPosts = []; // For the navbar avatar, handled in view
+        return view('settings', compact('user', 'usersAndPosts'));
+    }
+
+    // Update the user's settings/profile
+    public function updateSettings(Request $request)
+    {
+        $user = Auth::user();
+        
+        $inputs = $request->validate([
+            'name' => ['required', 'string', 'min:3', 'max:40'],
+            'email' => ['required', 'email', 'max:60', Rule::unique('users')->ignore($user->id)],
+        ]);
+
+        if ($request->filled('password')) {
+            $request->validate([
+                'password' => ['required', Password::min(8)],
+            ]);
+            $inputs['password'] = bcrypt($request->password);
+        }
+
+        $user->update($inputs);
+
+        return redirect()->route('settings')->with('success', 'Profile updated successfully!');
     }
 }

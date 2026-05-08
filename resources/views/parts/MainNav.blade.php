@@ -10,16 +10,18 @@
             <li class="NotificationMainNav"><a href="/myNotifications">NOTIFICATIONS</a></li>
         </ul>
     </nav>
-    <form action="{{ route('logout')}}" method="POST" class="nav_logout">
-        @csrf
-        <button type="submit">LOGOUT</button>
-    </form>
-    @foreach ($usersAndPosts as $userAndPost)
-        @if($userAndPost->user_id === Auth::id())
-            <img src="{{ $userAndPost->avatar ?? asset('media/Untitled (2).png') }}" alt="" >
-            @break
-        @endif
-    @endforeach
+    <div style="display: flex; align-items: center;">
+        <form action="{{ route('logout')}}" method="POST" class="nav_logout">
+            @csrf
+            <button type="submit">LOGOUT</button>
+        </form>
+        
+        <a href="{{ route('settings') }}" class="nav_profile_link">
+            <img class="profileImage" 
+                 src="{{ Auth::user()->avatar ? (Str::startsWith(Auth::user()->avatar, 'http') ? Auth::user()->avatar : asset(Auth::user()->avatar)) : asset('media/Untitled (2).png') }}" 
+                 alt="Settings" >
+        </a>
+    </div>
 </div>
 <style>
     
@@ -98,8 +100,20 @@
     align-items: center;
     justify-content: center;
 }
+.all_navigation_bar .nav_profile_link {
+    display: flex;
+    align-items: center;
+}
 
-/* --- Responsive --- */
+.all_navigation_bar img.profileImage {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px; 
+    object-fit: cover;
+    border: 2px solid #AACD72; 
+    cursor: pointer;
+    position: static; 
+}
 @media (max-width: 991.98px) {
     .all_navigation_bar .NotificationMainNav {
         display: none;

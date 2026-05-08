@@ -10,7 +10,9 @@
                 </ul>
             </nav>
             <nav class="parametre_icon">
-                <i class="fa-solid fa-gear"></i>
+                <a href="{{ route('settings') }}" style="color: inherit; text-decoration: none;">
+                    <i class="fa-solid fa-gear"></i>
+                </a>
             </nav>
         </div>
     </div>
