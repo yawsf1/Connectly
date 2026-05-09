@@ -62,6 +62,16 @@ class UserController extends Controller
     {
         return Socialite::driver('google')->redirect();
     }
+    public function deleteAccount()
+    {
+        $user = Auth::user();
+
+        Auth::logout();
+
+        $user->delete();
+
+        return redirect('/')->with('success', 'Account deleted successfully.');
+    }
 
     // Handle Google callback
     public function handleGoogleCallback()

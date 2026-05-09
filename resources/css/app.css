@@ -575,6 +575,7 @@ i {
     cursor: pointer;
     margin-top: 10px;
 }
+
 .container_of_home3 .register_form .orOtherAuth {
     width: 100%;
     text-align: center;
@@ -996,4 +997,64 @@ i {
         position: relative;
         gap: 20px;
     }
+}
+.container_of_home {
+    display: flex;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.main_page {
+    flex-grow: 1;
+    margin-left: 60px;
+    width: calc(100% - 60px);
+    box-sizing: border-box;
+}
+
+@media (max-width: 575.98px) {
+    .main_page {
+        margin-left: 0;
+        width: 100%;
+        padding-bottom: 70px;
+    }
+}
+
+.submit_container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#submit1 {
+    width: 100%;
+    max-width: 350px;
+    height: 50px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+
+#submit1:hover {
+    transform: translateY(-2px);
+}
+.register_form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.register_form input,
+#submit1,
+.authGoogle {
+    width: 100%;
+    max-width: 350px;
+}
+
+#submit1 {
+    display: block;
+    margin-top: 10px;
 }

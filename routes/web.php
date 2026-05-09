@@ -31,6 +31,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [UserController::class, 'settings'])->name('profile');
     Route::put('/settings', [UserController::class, 'updateSettings'])->name('settings.update');
 
+
+    Route::delete('/settings/delete-account', [UserController::class, 'deleteAccount'])
+    ->name('settings.deleteAccount');
 });
 
 

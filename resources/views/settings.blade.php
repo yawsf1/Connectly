@@ -23,8 +23,7 @@
         <div class="main_page">
 
             <div class="page_home">
-                <h3 class="salutation">Profile Settings</h3>
-                
+                <h3 class="salutation" style="color: #AACD72;  font-weight: bold; font-size: 1.5rem; text-align: center;">Profile Settings</h3>
                 <div class="allPosts" style="margin-top: 20px; width: 100%;">
                     
                     <div style="background-color: #DAEDED; padding: 25px; border-radius: 8px; width: 80%; max-width: 600px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
@@ -63,11 +62,129 @@
                             </div>
 
                             <button type="submit" style="background-color: #01544F; color: #AACD72; border: none; padding: 12px 20px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; transition: background-color 0.3s; margin-top: 10px;" onmouseover="this.style.backgroundColor='#02423e'" onmouseout="this.style.backgroundColor='#01544F'">Save Changes</button>
+                            <hr style="border: none; border-top: 2px solid rgba(1,84,79,0.15); margin: 25px 0;">
+
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                
+                                <h4 style="color: #b91c1c; font-size: 1.1rem; font-weight: bold; font-family: 'Poppins', sans-serif;">
+                                    Danger Zone
+                                </h4>
+
+                                <p style="color: #01544F; font-size: 0.95rem; line-height: 1.5;">
+                                    Deleting your account is permanent. All your posts, messages, and profile data will be removed forever.
+                                </p>
+
+                                <button
+                                    type="button"
+                                    onclick="openDeleteModal()"
+                                    style="background-color: #dc2626;
+                                        color: white;
+                                        border: none;
+                                        padding: 12px 20px;
+                                        font-size: 1rem;
+                                        font-weight: bold;
+                                        border-radius: 6px;
+                                        cursor: pointer;
+                                        transition: 0.3s;
+                                        width: fit-content;"
+                                    onmouseover="this.style.backgroundColor='#b91c1c'"
+                                    onmouseout="this.style.backgroundColor='#dc2626'"
+                                >
+                                    Delete Account
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </main>
+    <div id="deleteModal"
+     style="display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;">
+
+    <div style="background: #DAEDED;
+                padding: 30px;
+                border-radius: 10px;
+                width: 90%;
+                max-width: 450px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                text-align: center;">
+
+        <i class="fa-solid fa-triangle-exclamation"
+           style="font-size: 2rem; color: #dc2626; margin-bottom: 15px;"></i>
+
+        <h3 style="color: #01544F; margin-bottom: 10px;">
+            Delete Account?
+        </h3>
+
+        <p style="color: #01544F; margin-bottom: 25px; line-height: 1.5;">
+            Are you sure you want to delete your account? This action cannot be undone.
+        </p>
+
+        <div style="display: flex; justify-content: center; gap: 15px;">
+
+            <button onclick="closeDeleteModal()"
+                    style="background: #9ca3af;
+                        color: white;
+                        border: none;
+                        padding: 12px 25px;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        font-weight: bold;
+                        transition: all 0.3s ease;"
+                    onmouseover="this.style.background='#6b7280'; this.style.transform='translateY(-2px)'"
+                    onmouseout="this.style.background='#9ca3af'; this.style.transform='translateY(0)'">
+                No
+            </button>
+
+            <form action="{{ route('settings.deleteAccount') }}" method="POST">
+                @csrf
+                @method('DELETE')
+
+                <button type="submit"
+                        style="background: #dc2626;
+                            color: white;
+                            border: none;
+                            padding: 12px 25px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-weight: bold;
+                            transition: all 0.3s ease;"
+                        onmouseover="this.style.background='#b91c1c'; this.style.transform='translateY(-2px)'"
+                        onmouseout="this.style.background='#dc2626'; this.style.transform='translateY(0)'">
+                    Yes, Delete
+                </button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function openDeleteModal() {
+        document.getElementById('deleteModal').style.display = 'flex';
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('deleteModal');
+
+        if (event.target === modal) {
+            closeDeleteModal();
+        }
+    }
+</script>
 </body>
 </html>

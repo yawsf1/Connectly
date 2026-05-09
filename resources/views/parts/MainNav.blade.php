@@ -4,12 +4,21 @@
     </nav>
     <nav class="nav_sections">
         <ul class="list_sections">
-            <li class="HomeMainNav"><a id="home_link" href="/">HOME</a></li>
-            <li class="PostsMainNav"><a href="/myPosts">POSTS</a></li>
-            <li class="FriendsMainNav"><a href="/myFriends">FRIENDS</a></li>
-            <li class="NotificationMainNav"><a href="/myNotifications">NOTIFICATIONS</a></li>
+            <li class="HomeMainNav">
+                <a class="{{ Request::is('home') ? 'active-nav' : '' }}" href="/">HOME</a>
+            </li>
+            <li class="PostsMainNav">
+                <a class="{{ Request::is('myPosts') ? 'active-nav' : '' }}" href="/myPosts">POSTS</a>
+            </li>
+            <li class="FriendsMainNav">
+                <a class="{{ Request::is('myFriends') ? 'active-nav' : '' }}" href="/myFriends">FRIENDS</a>
+            </li>
+            <li class="NotificationMainNav">
+                <a class="{{ Request::is('myNotifications') ? 'active-nav' : '' }}" href="/myNotifications">NOTIFICATIONS</a>
+            </li>
         </ul>
     </nav>
+    
     <div style="display: flex; align-items: center;">
         <form action="{{ route('logout')}}" method="POST" class="nav_logout">
             @csrf
@@ -17,7 +26,7 @@
         </form>
         
         <a href="{{ route('settings') }}" class="nav_profile_link">
-            <img class="profileImage" 
+            <img class="profileImage {{ Request::is('settings') ? 'active-profile' : '' }}" 
                  src="{{ Auth::user()->avatar ? (Str::startsWith(Auth::user()->avatar, 'http') ? Auth::user()->avatar : asset(Auth::user()->avatar)) : asset('media/Untitled (2).png') }}" 
                  alt="Settings" >
         </a>
@@ -100,6 +109,22 @@
     align-items: center;
     justify-content: center;
 }
+.list_sections li a.active-nav {
+    text-decoration: none;
+    color: #01544F;
+    background-color: #AACD72;
+    height: 40px;
+    padding: 0 15px; 
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.active-profile {
+    border: 3px solid #01544F ;
+}
 .all_navigation_bar .nav_profile_link {
     display: flex;
     align-items: center;
@@ -167,6 +192,26 @@
         margin-right: 60px;
     }
 }
+.all_navigation_bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; 
+    padding: 0 15px;
+    box-sizing: border-box;
+    height: 55px;
+}
 
+@media (max-width: 575.98px) {
+    .nav_sections {
+        display: none; 
+    }
+    
+    .nav_logout button {
+        width: 80px;
+        font-size: 0.8rem;
+        margin-right: 10px;
+    }
+}
 
 </style>

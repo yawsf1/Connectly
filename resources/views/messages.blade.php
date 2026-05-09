@@ -12,6 +12,50 @@
     <link rel="icon" href="{{ asset('media/Untitled design.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <title>Connectly - Messages</title>
+    <style>
+        .container_of_home {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .main_page {
+            flex-grow: 1;
+            padding: 20px;
+            box-sizing: border-box;
+            margin-left: 60px; 
+            display: flex;
+            justify-content: start;
+        }
+
+        .page_home {
+            width: 100%;
+            max-width: 700px; /* Limits width on desktop but stays fluid on mobile */
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        @media (max-width: 767.98px) {
+            .main_page {
+                margin-left: 60px;
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .main_page {
+                margin-left: 0;
+                margin-bottom: 70px; /* Space for the bottom navigation bar */
+                padding: 10px;
+            }
+            .message-bubble {
+                max-width: 90%;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -23,160 +67,60 @@
         @include('parts.SideNav')
         <div class="main_page">
             <div class="page_home">
-                <h3 class="salutation" style="color: #AACD72; font-weight: bold; font-size: 1.5rem; text-align: center;">Messages</h3>
+                <h3 class="salutation" style="color: #AACD72; font-weight: bold; font-size: 1.5rem; text-align: center; margin-top: 10px;">Messages</h3>
 
-                <div class="allPosts" style="margin-top: 20px; width: 100%; display: flex; flex-direction: column; gap: 30px;">
+                <div class="allPosts" style="margin-top: 20px; width: 100%; display: flex; flex-direction: column; gap: 20px;">
 
-                    {{-- NEW MESSAGE FORM --}}
-                    <div style="background-color: #DAEDED; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%;">
-                        <h4 style="color: #01544F; font-family: 'Poppins', sans-serif; margin-bottom: 15px; font-size: 1.2rem;">
+                    <div style="background-color: #DAEDED; padding: 20px; border-radius: 8px; width: 100%; box-sizing: border-box;">
+                        <h4 style="color: #01544F; font-family: 'Poppins', sans-serif; margin-bottom: 15px; font-size: 1.1rem;">
                             <i class="fa-solid fa-paper-plane" style="color: #AACD72; margin-right: 8px;"></i> New Message
                         </h4>
 
                         @if($friends->isEmpty())
-                            {{-- No friends yet --}}
                             <div style="text-align: center; color: #666; padding: 20px; background-color: #fff; border-radius: 8px;">
-                                <i class="fa-solid fa-user-group" style="font-size: 1.8rem; color: #DAEDED; margin-bottom: 10px; display: block;"></i>
-                                <p style="font-family: 'Poppins', sans-serif; margin: 0;">You have no friends yet. Add friends to start messaging.</p>
+                                <p style="font-family: 'Poppins', sans-serif; margin: 0;">No friends yet.</p>
                             </div>
                         @else
                             <form method="POST" action="{{ route('messages.store') }}" style="display: flex; flex-direction: column; gap: 15px;">
                                 @csrf
-
-                                {{-- Friends dropdown --}}
-                                <div style="position: relative;">
-                                    <label style="font-family: 'Poppins', sans-serif; font-size: 0.85rem; color: #01544F; font-weight: 600; margin-bottom: 6px; display: block;">
-                                        Send to
-                                    </label>
-                                    <div style="position: relative;">
-                                        <select
-                                            name="receiver_id"
-                                            required
-                                            style="
-                                                width: 100%;
-                                                padding: 12px 40px 12px 45px;
-                                                border-radius: 6px;
-                                                border: 1px solid #ccc;
-                                                outline: none;
-                                                font-family: 'Poppins', sans-serif;
-                                                font-size: 0.95rem;
-                                                color: #01544F;
-                                                background-color: #fff;
-                                                appearance: none;
-                                                -webkit-appearance: none;
-                                                cursor: pointer;
-                                                transition: border-color 0.3s;
-                                            "
-                                            onfocus="this.style.borderColor='#01544F'"
-                                            onblur="this.style.borderColor='#ccc'"
-                                        >
-                                            <option value="" disabled selected style="color: #999;">Choose a friend...</option>
+                                <div style="width: 100%;">
+                                    <div style="position: relative; width: 100%;">
+                                        <select name="receiver_id" required style="width: 100%; padding: 12px 12px 12px 40px; border-radius: 6px; border: 1px solid #ccc; font-family: 'Poppins', sans-serif; box-sizing: border-box; background: white;">
+                                            <option value="" disabled selected>Choose a friend...</option>
                                             @foreach($friends as $friend)
-                                                <option value="{{ $friend->id }}">
-                                                    {{ $friend->name }}
-                                                    &nbsp;·&nbsp;
-                                                    {{ $friend->unique_code }}
-                                                </option>
+                                                <option value="{{ $friend->id }}">{{ $friend->name }}</option>
                                             @endforeach
                                         </select>
-
-                                        {{-- User icon on the left --}}
-                                        <i class="fa-solid fa-user" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #AACD72; pointer-events: none;"></i>
-
-                                        {{-- Chevron on the right --}}
-                                        <i class="fa-solid fa-chevron-down" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #01544F; pointer-events: none; font-size: 0.8rem;"></i>
+                                        <i class="fa-solid fa-user" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #AACD72;"></i>
                                     </div>
                                 </div>
 
-                                {{-- Message textarea --}}
-                                <div>
-                                    <label style="font-family: 'Poppins', sans-serif; font-size: 0.85rem; color: #01544F; font-weight: 600; margin-bottom: 6px; display: block;">
-                                        Message
-                                    </label>
-                                    <textarea
-                                        name="content"
-                                        placeholder="Type your message here..."
-                                        required
-                                        style="
-                                            width: 100%;
-                                            padding: 12px;
-                                            border-radius: 6px;
-                                            border: 1px solid #ccc;
-                                            outline: none;
-                                            font-family: 'Poppins', sans-serif;
-                                            min-height: 100px;
-                                            resize: vertical;
-                                            transition: border-color 0.3s;
-                                            box-sizing: border-box;
-                                        "
-                                        onfocus="this.style.borderColor='#01544F'"
-                                        onblur="this.style.borderColor='#ccc'"
-                                    ></textarea>
-                                </div>
+                                <textarea name="content" placeholder="Type your message..." required style="width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #ccc; min-height: 80px; box-sizing: border-box; font-family: 'Poppins', sans-serif;"></textarea>
 
-                                <button
-                                    type="submit"
-                                    style="
-                                        background-color: #01544F;
-                                        color: #AACD72;
-                                        border: none;
-                                        padding: 10px 24px;
-                                        font-weight: bold;
-                                        font-family: 'Poppins', sans-serif;
-                                        border-radius: 6px;
-                                        cursor: pointer;
-                                        align-self: flex-start;
-                                        transition: background-color 0.3s;
-                                        display: flex;
-                                        align-items: center;
-                                        gap: 8px;
-                                    "
-                                    onmouseover="this.style.backgroundColor='#02423e'"
-                                    onmouseout="this.style.backgroundColor='#01544F'"
-                                >
-                                    Send <i class="fa-solid fa-paper-plane"></i>
+                                <button type="submit" style="background-color: #01544F; color: #AACD72; border: none; padding: 10px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; align-self: flex-start;">
+                                    Send
                                 </button>
                             </form>
                         @endif
                     </div>
 
-                    {{-- INBOX HISTORY --}}
-                    <div style="background-color: #ffffff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%;">
-                        <h4 style="color: #01544F; font-family: 'Poppins', sans-serif; margin-bottom: 20px; border-bottom: 2px solid #DAEDED; padding-bottom: 10px;">
-                            <i class="fa-solid fa-inbox" style="color: #AACD72; margin-right: 8px;"></i> Inbox History
+                    <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; width: 100%; box-sizing: border-box; border: 1px solid #DAEDED;">
+                        <h4 style="color: #01544F; font-family: 'Poppins', sans-serif; margin-bottom: 15px; border-bottom: 2px solid #DAEDED; padding-bottom: 5px;">
+                            <i class="fa-solid fa-inbox" style="color: #AACD72; margin-right: 8px;"></i> History
                         </h4>
 
                         @if($messages->isEmpty())
-                            <div style="text-align: center; color: #666; padding: 30px;">
-                                <i class="fa-regular fa-comments" style="font-size: 2rem; color: #DAEDED; margin-bottom: 10px; display: block;"></i>
-                                No messages yet.
-                            </div>
+                            <div style="text-align: center; color: #999; padding: 20px;">No messages.</div>
                         @else
-                            <div style="display: flex; flex-direction: column; gap: 15px; max-height: 500px; overflow-y: auto; padding-right: 10px;">
+                            <div style="display: flex; flex-direction: column; gap: 15px; max-height: 400px; overflow-y: auto;">
                                 @foreach($messages as $message)
                                     @if($message->sender_id === Auth::id())
-                                        {{-- Sent message --}}
-                                        <div style="align-self: flex-end; background-color: #AACD72; color: #01544F; padding: 12px 18px; border-radius: 20px 20px 0px 20px; max-width: 75%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; gap: 15px;">
-                                                <strong style="font-size: 0.85rem; opacity: 0.8; font-family: 'Poppins', sans-serif;">
-                                                    <i class="fa-solid fa-arrow-up-right" style="font-size: 0.7rem;"></i>
-                                                    To: {{ $message->receiver->name ?? 'User #' . $message->receiver_id }}
-                                                </strong>
-                                                <small style="font-size: 0.7rem; opacity: 0.7;">{{ $message->created_at->diffForHumans() }}</small>
-                                            </div>
-                                            <p style="margin: 0; font-family: 'Inter', sans-serif;">{{ $message->content }}</p>
+                                        <div class="message-bubble" style="align-self: flex-end; background-color: #AACD72; color: #01544F; padding: 10px 15px; border-radius: 15px 15px 0 15px;">
+                                            <p style="margin: 0; font-size: 0.9rem;">{{ $message->content }}</p>
                                         </div>
                                     @else
-                                        {{-- Received message --}}
-                                        <div style="align-self: flex-start; background-color: #DAEDED; color: #01544F; padding: 12px 18px; border-radius: 20px 20px 20px 0px; max-width: 75%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; gap: 15px;">
-                                                <strong style="font-size: 0.85rem; opacity: 0.8; font-family: 'Poppins', sans-serif;">
-                                                    <i class="fa-solid fa-arrow-down-left" style="font-size: 0.7rem;"></i>
-                                                    From: {{ $message->sender->name ?? 'User #' . $message->sender_id }}
-                                                </strong>
-                                                <small style="font-size: 0.7rem; opacity: 0.7;">{{ $message->created_at->diffForHumans() }}</small>
-                                            </div>
-                                            <p style="margin: 0; font-family: 'Inter', sans-serif;">{{ $message->content }}</p>
+                                        <div class="message-bubble" style="align-self: flex-start; background-color: #DAEDED; color: #01544F; padding: 10px 15px; border-radius: 15px 15px 15px 0;">
+                                            <p style="margin: 0; font-size: 0.9rem;">{{ $message->content }}</p>
                                         </div>
                                     @endif
                                 @endforeach

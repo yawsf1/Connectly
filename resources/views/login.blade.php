@@ -39,12 +39,14 @@
                 <h4 class="error"> {{$message}} </h4>    
             @enderror
 
-            @error('email','login')
+            @error('login')
                 <h4 class="error"> {{$message}} </h4>    
             @enderror
+            
 
-            <button type="submit" id="submit1">LOGIN</button>
-
+            <div class="submit_container">
+                <button type="submit" id="submit1">LOGIN</button>
+            </div>
             <h2 class="orOtherAuth">Or</h2>
 
             <div class="authGoogle">
