@@ -29,4 +29,17 @@ class NotificationController extends Controller
         $notification->update(['is_read' => true]);
         return back();
     }
+    public function destroy($id) {
+        $notification = Notification::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+        $notification->delete();
+        return back();
+    }
+    public function destroyAll() {
+        Notification::where('user_id', Auth::id())->delete();
+        return back();
+    }
+
+
 }

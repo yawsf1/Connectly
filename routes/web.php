@@ -16,7 +16,9 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/myNotifications', [NotificationController::class, 'index'])->name('myNotifications');
     Route::put('/notifications/{id}', [NotificationController::class, 'update'])->name('notifications.update');
-    
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+    Route::delete('/notifications', [NotificationController::class, 'destroyAll'])->name('notifications.destroyAll');
+
     Route::get('/myFriends', [FriendController::class, 'index'])->name('myFriends');
     Route::post('/friends', [FriendController::class, 'store'])->name('friends.store');
     Route::put('/friends/{id}', [FriendController::class, 'update'])->name('friends.update');
@@ -28,6 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings', [UserController::class, 'settings'])->name('settings');
     Route::get('/profile', [UserController::class, 'settings'])->name('profile');
     Route::put('/settings', [UserController::class, 'updateSettings'])->name('settings.update');
+
 });
 
 

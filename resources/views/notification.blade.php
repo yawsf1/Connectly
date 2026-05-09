@@ -12,50 +12,227 @@
     <link rel="icon" href="{{ asset('media/Untitled design.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <title>Connectly - Notifications</title>
+
+    <style>
+        .notification-card {
+            width: 100%;
+            background-color: #daeded;
+            border-radius: 6px;
+            padding: 15px 20px;
+            border-left: 5px solid transparent;
+            transition: transform 0.2s;
+            box-sizing: border-box;
+        }
+        .notification-card.unread {
+            background-color: #ffffff;
+            border-left-color: #aacd72;
+        }
+        .notification-card:hover {
+            transform: scale(1.01);
+        }
+        .notification-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .notification-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+        .notification-left .bell-icon {
+            font-size: 1.1rem;
+            cursor: default;
+        }
+        .notification-left .bell-icon.unread {
+            color: #aacd72;
+        }
+        .notification-left .bell-icon.read {
+            color: #01544f;
+        }
+        .notification-message {
+            color: #01544f;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+        .notification-time {
+            color: #666;
+            font-size: 0.78rem;
+            margin-top: 3px;
+            display: block;
+        }
+        .notification-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .btn-mark-read {
+            background-color: #aacd72;
+            color: #01544f;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-mark-read:hover {
+            background-color: #90b55a;
+        }
+        .btn-delete {
+            background-color: transparent;
+            color: #e53935;
+            border: 2px solid #e53935;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        .btn-delete i {
+            color: #e53935;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .btn-delete:hover {
+            background-color: #e53935;
+        }
+        .btn-delete:hover i {
+            color: #fff;
+        }
+        .btn-clear-all {
+            background-color: transparent;
+            color: #e53935;
+            border: 2px solid #e53935;
+            padding: 7px 18px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.83rem;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .btn-clear-all i {
+            color: #e53935;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .btn-clear-all:hover {
+            background-color: #e53935;
+            color: #fff;
+        }
+        .btn-clear-all:hover i {
+            color: #fff;
+        }
+        .empty-notifications {
+            background-color: #daeded;
+            color: #01544f;
+            padding: 35px 20px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .empty-notifications i {
+            font-size: 2rem;
+            color: #aacd72;
+            margin-bottom: 12px;
+            display: block;
+            cursor: default;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <?php 
-           $usersAndPosts = []; 
-        ?>
+        <?php $usersAndPosts = []; ?>
         @include('parts.MainNav', ['usersAndPosts' => \Illuminate\Support\Facades\DB::table('users')->select('avatar')->where('id', Auth::id())->get()->map(function($user) { return (object)['user_id' => Auth::id(), 'avatar' => $user->avatar]; })])
     </header>
 
     <main class="container_of_home">
         @include('parts.SideNav')
         <div class="main_page">
-
             <div class="page_home">
-                <h3 class="salutation" style="color: #AACD72; font-weight: bold; font-size: 1.5rem; text-align: center;">Notifications</h3>
-            
-                <div class="allPosts" style="margin-top: 20px; width: 100%;">
+
+                <h3 class="salutation" style="color: #aacd72; font-weight: bold; font-size: 1.5rem; text-align: center; margin-bottom: 5px;">Notifications</h3>
+
+                <div class="allPosts">
+
                     @if($notifications->isEmpty())
-                        <div style="background-color: #DAEDED; color: #01544F; padding: 30px; border-radius: 8px; text-align: center; font-weight: bold; font-family: 'Poppins', sans-serif;">
-                            <i class="fa-regular fa-bell-slash" style="font-size: 2rem; margin-bottom: 10px; color: #AACD72;"></i><br>
+                        <div class="empty-notifications">
+                            <i class="fa-regular fa-bell-slash"></i>
                             No new notifications right now.
                         </div>
                     @else
-                        <div style="display: flex; flex-direction: column; gap: 15px;">
-                            @foreach($notifications as $notification)
-                                <div class="iPost" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background-color: {{ $notification->is_read ? '#DAEDED' : '#ffffff' }}; color: #01544F; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid {{ $notification->is_read ? 'transparent' : '#AACD72' }}; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.01)'" onmouseout="this.style.transform='scale(1)'">
-                                    <div style="display: flex; align-items: center; gap: 15px;">
-                                        <i class="fa-solid fa-bell" style="color: {{ $notification->is_read ? '#01544F' : '#AACD72' }}; font-size: 1.2rem;"></i>
+                        {{-- Clear All --}}
+                        <div style="width: 100%; display: flex; justify-content: flex-end; margin-bottom: 12px;">
+                            <form method="POST" action="{{ route('notifications.destroyAll') }}">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn-clear-all">
+                                    <i class="fa-solid fa-trash"></i> Clear All
+                                </button>
+                            </form>
+                        </div>
+
+                        {{-- Notification list --}}
+                        @foreach($notifications as $notification)
+                            <div class="notification-card {{ $notification->is_read ? 'read' : 'unread' }}">
+                                <div class="notification-top">
+
+                                    {{-- Left: bell + text --}}
+                                    <div class="notification-left">
+                                        <i class="fa-solid fa-bell bell-icon {{ $notification->is_read ? 'read' : 'unread' }}"></i>
                                         <div>
-                                            <p style="margin: 0; font-weight: bold; font-family: 'Poppins', sans-serif;">{{ $notification->message }}</p>
-                                            <small style="color: #666; font-size: 0.8rem;">{{ $notification->created_at->diffForHumans() }}</small>
+                                            <p class="notification-message">{{ $notification->message }}</p>
+                                            <small class="notification-time">{{ $notification->created_at->diffForHumans() }}</small>
                                         </div>
                                     </div>
-                                    @if(!$notification->is_read)
-                                        <form method="POST" action="{{ route('notifications.update', $notification->id) }}">
+
+                                    {{-- Right: actions --}}
+                                    <div class="notification-actions">
+                                        @if(!$notification->is_read)
+                                            <form method="POST" action="{{ route('notifications.update', $notification->id) }}">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="btn-mark-read">
+                                                    <i class="fa-solid fa-check" style="color: #01544f; font-size: 0.8rem;"></i> Mark as Read
+                                                </button>
+                                            </form>
+                                        @endif
+
+                                        <form method="POST" action="{{ route('notifications.destroy', $notification->id) }}">
                                             @csrf
-                                            @method('PUT')
-                                            <button type="submit" style="background-color: #AACD72; color: #01544F; border: none; padding: 8px 16px; cursor: pointer; border-radius: 20px; font-weight: bold; transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#90b55a'" onmouseout="this.style.backgroundColor='#AACD72'">Mark as Read</button>
+                                            @method('DELETE')
+                                            <button type="submit" class="btn-delete">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
                                         </form>
-                                    @endif
+                                    </div>
+
                                 </div>
-                            @endforeach
-                        </div>
+                            </div>
+                        @endforeach
                     @endif
+
                 </div>
             </div>
         </div>
