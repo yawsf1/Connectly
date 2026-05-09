@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-sed -i "s/RAILWAY_PORT_PLACEHOLDER/${PORT}/g" /etc/nginx/conf.d/default.conf
+sed -i "s/RAILWAY_PORT_PLACEHOLDER/${PORT}/g" /etc/nginx/sites-available/default
 
 php artisan migrate --force
 php artisan config:clear
