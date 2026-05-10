@@ -1,144 +1,166 @@
 # Connectly
 
-Connectly is a Laravel-based social networking application that enables users to connect with friends, share posts, send private messages, and receive notifications. Built with modern web technologies, it provides a seamless experience for social interactions.
+Connectly is a Laravel-based social networking platform that enables users to connect with friends, share posts, send private messages, and receive notifications.
+
+Live Demo: https://connectly-production-c88...up.railway.app
+
+---
 
 ## Features
 
-- **User Authentication**: Secure registration and login system with Google OAuth integration.
-- **User Profiles**: Unique codes for users, profile management.
-- **Posting**: Create and share posts with other users.
-- **Friend System**: Add and manage friends.
-- **Messaging**: Send and receive private messages.
-- **Notifications**: Real-time notifications for activities like new messages or friend requests.
-- **Responsive Design**: Built with Blade templates and Vite for fast, responsive frontend.
+- **User Authentication**: Secure registration and login with Google OAuth integration
+- **User Profiles**: Unique codes for users and profile management
+- **Posting**: Create and share posts with other users
+- **Friend System**: Add and manage friends
+- **Messaging**: Send and receive private messages
+- **Notifications**: Real-time notifications for new messages and friend requests
+- **Responsive Design**: Built with Blade templates and Vite for a fast, responsive frontend
+- **Dockerized Deployment**: Production-ready Docker setup deployed on Railway
+
+---
 
 ## Technologies Used
 
 - **Backend**: Laravel (PHP Framework)
 - **Frontend**: Blade Templates, JavaScript, Vite
-- **Database**: MySQL (via Laravel's Eloquent ORM)
-- **Authentication**: Laravel Sanctum or built-in Auth
-- **Styling**: CSS (with potential for Tailwind or Bootstrap)
-- **Testing**: PHPUnit
-- **Deployment**: Docker (docker-compose.yml available)
+- **Database**: MySQL via Laravel Eloquent ORM
+- **Authentication**: Laravel Auth with Google OAuth
+- **Deployment**: Docker, deployed on Railway
+
+---
 
 ## Installation
 
 ### Prerequisites
 
-- PHP 8.1 or higher
+- PHP 8.2 or higher
 - Composer
 - Node.js and npm
-- MySQL or another supported database
-- Docker (optional, for containerized setup)
+- MySQL
+- Docker (for containerized setup)
 
 ### Steps
 
-1. **Clone the repository**:
+#### 1. Clone the repository
 
-    ```bash
-    git clone <repository-url>
-    cd Connectly
-    ```
+```bash
+git clone https://github.com/yawsf1/Connectly
+cd Connectly
+```
 
-2. **Install PHP dependencies**:
+#### 2. Install PHP dependencies
 
-    ```bash
-    composer install
-    ```
+```bash
+composer install
+```
 
-3. **Install Node.js dependencies**:
+#### 3. Install Node.js dependencies
 
-    ```bash
-    npm install
-    ```
+```bash
+npm install
+```
 
-4. **Environment Configuration**:
-    - Copy `.env.example` to `.env`:
-        ```bash
-        cp .env.example .env
-        ```
-    - Update the `.env` file with your database credentials, app key, and other settings.
-    - Generate application key:
-        ```bash
-        php artisan key:generate
-        ```
+#### 4. Environment Configuration
 
-5. **Database Setup**:
-    - Create a database in MySQL.
-    - Run migrations:
-        ```bash
-        php artisan migrate
-        ```
-    - (Optional) Seed the database:
-        ```bash
-        php artisan db:seed
-        ```
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-6. **Build Assets**:
+Update `.env` with your database credentials and Google OAuth keys:
 
-    ```bash
-    npm run build
-    ```
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=connectly
+DB_USERNAME=root
+DB_PASSWORD=
 
-7. **Start the Application**:
-    - For development:
-        ```bash
-        php artisan serve
-        ```
-        And in another terminal:
-        ```bash
-        npm run dev
-        ```
-    - Or use Docker:
-        ```bash
-        docker-compose up
-        ```
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback
+```
 
-8. **Access the Application**:
-    - Open your browser and go to `http://localhost:8000` (or the configured port).
+#### 5. Database Setup
 
-## Usage
+```bash
+php artisan migrate
+```
 
-- **Registration/Login**: Users can sign up or log in using email/password or Google OAuth.
-- **Dashboard**: View home feed with posts from friends.
-- **Friends**: Search and add friends.
-- **Messages**: Send private messages to friends.
-- **Posts**: Create new posts, view your posts on the "My Posts" page.
-- **Notifications**: Check notifications for updates.
+#### 6. Build Assets
+
+```bash
+npm run build
+```
+
+#### 7. Start the Application
+
+```bash
+php artisan serve
+```
+
+In another terminal:
+
+```bash
+npm run dev
+```
+
+#### 8. Open your browser at `http://localhost:8000`
+
+---
+
+## Docker Setup
+
+Build and run with Docker:
+
+```bash
+docker build -t connectly .
+docker run -p 8080:8080 \
+  -e APP_KEY=your-app-key \
+  -e DB_HOST=host.docker.internal \
+  -e DB_DATABASE=connectly \
+  -e DB_USERNAME=root \
+  -e DB_PASSWORD=your-password \
+  --add-host=host.docker.internal:host-gateway \
+  connectly
+```
+
+---
+
+## Deployment
+
+This app is deployed on Railway using Docker. The following environment variables must be set in Railway's Variables tab:
+
+```env
+APP_ENV=production
+APP_KEY=
+APP_URL=
+DB_CONNECTION=mysql
+DB_HOST=
+DB_PORT=3306
+DB_DATABASE=
+DB_USERNAME=
+DB_PASSWORD=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_REDIRECT_URI=
+```
+
+---
 
 ## Database Schema
 
-The application uses the following main models:
+Main models:
 
-- **User**: Stores user information, including Google fields and unique codes.
-- **Post**: User posts.
-- **Friend**: Friendship relationships.
-- **Message**: Private messages between users.
-- **Notification**: System notifications.
+- **User**: User information including Google OAuth fields and unique codes
+- **Post**: User posts
+- **Friend**: Friendship relationships
+- **Message**: Private messages between users
+- **Notification**: System notifications
 
-Run `php artisan migrate:status` to see migration status.
-
-## Testing
-
-Run the test suite with PHPUnit:
-
-```bash
-php artisan test
-```
-
-## Contributing
-
-1. Fork the repository.
-2. Create a feature branch: `git checkout -b feature-name`.
-3. Commit your changes: `git commit -am 'Add feature'`.
-4. Push to the branch: `git push origin feature-name`.
-5. Submit a pull request.
+---
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Support
-
-For support or questions, please open an issue on the GitHub repository.
+This project is licensed under the MIT License.
